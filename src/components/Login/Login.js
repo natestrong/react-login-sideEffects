@@ -1,12 +1,10 @@
-import React, {useReducer, useState} from 'react';
+import React, {useEffect, useReducer, useState} from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
 
 function isValidEmail(email) {
-    const c = /\S+@\S+\.\S+/.test(email);
-    console.log(email, c);
     return /\S+@\S+\.\S+/.test(email);
 }
 
@@ -15,7 +13,6 @@ function emailReducer(state, action) {
         case 'USER_INPUT':
             return {value: action.payload, isValid: isValidEmail(action.payload)};
         case 'INPUT_BLUR':
-            console.log('BLUR');
             return {value: state.value, isValid: isValidEmail(state.value)};
         default:
             return {value: '', isValid: false};
@@ -25,10 +22,9 @@ function emailReducer(state, action) {
 function passwordReducer(state, action) {
     switch (action.type) {
         case 'USER_INPUT':
-            return {value: action.payload, isValid: action.payload > 6};
+            return {value: action.payload, isValid: action.payload.length > 6};
         case 'INPUT_BLUR':
-            console.log('BLUR');
-            return {value: state.value, isValid: isValidEmail(state.value)};
+            return {value: state.value, isValid: state.value.length > 6};
         default:
             return {value: '', isValid: false};
     }
@@ -39,16 +35,20 @@ const Login = (props) => {
     const [passwordState, dispatchPassword] = useReducer(passwordReducer, {value: '', isValid: null});
     const [emailState, dispatchEmail] = useReducer(emailReducer, {value: '', isValid: null});
 
+    const {isValid: isValidEmail} = emailState;
+    const {isValid: isValidPassword} = passwordState;
+
+    useEffect(() => {
+        setFormIsValid(isValidEmail && isValidPassword);
+        console.log(isValidEmail && isValidPassword);
+    }, [isValidEmail, isValidPassword]);
+
     const emailChangeHandler = (event) => {
         dispatchEmail({type: 'USER_INPUT', payload: event.target.value});
     };
 
     const passwordChangeHandler = (event) => {
         dispatchPassword({type: 'USER_INPUT', payload: event.target.value});
-
-        setFormIsValid(
-            emailState.isValid && event.target.value.trim().length > 6
-        );
     };
 
     const emailBlurHandler = () => {

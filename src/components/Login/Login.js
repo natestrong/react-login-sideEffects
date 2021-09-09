@@ -20,8 +20,6 @@ function emailReducer(state, action) {
         default:
             return {value: '', isValid: false};
     }
-
-
 }
 
 const Login = (props) => {

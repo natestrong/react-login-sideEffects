@@ -86,9 +86,22 @@ const Login = () => {
         dispatchPassword({type: 'INPUT_BLUR'});
     };
 
+    const focusChildren = {
+        email: () => {
+        },
+        password: () => {
+        }
+    };
+
     const submitHandler = (event) => {
         event.preventDefault();
-        authContext.onLogin(emailState.value, passwordState.value);
+        if (formIsValid) {
+            authContext.onLogin(emailState.value, passwordState.value);
+        } else if (!isValidEmail) {
+            focusChildren.email();
+        } else {
+            focusChildren.password();
+        }
     };
 
     return (
@@ -102,6 +115,7 @@ const Login = () => {
                     value={emailState.value}
                     onChange={emailChangeHandler}
                     onBlur={emailBlurHandler}
+                    focus={focusChildren}
                 />
                 <Input
                     label='Password'
@@ -111,11 +125,11 @@ const Login = () => {
                     value={passwordState.value}
                     onChange={passwordChangeHandler}
                     onBlur={passwordBlurHandler}
+                    focus={focusChildren}
                 />
                 <div className={classes.actions}>
                     <Button type='submit'
-                            className={classes.btn}
-                            disabled={!formIsValid}>
+                            className={classes.btn}>
                         Login
                     </Button>
                 </div>

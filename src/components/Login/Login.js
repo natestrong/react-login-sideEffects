@@ -4,6 +4,7 @@ import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
 import AuthContext from '../../store/auth-context';
+import Input from '../UI/Input/Input';
 
 function isValidEmail(email) {
     return /\S+@\S+\.\S+/.test(email);
@@ -12,22 +13,46 @@ function isValidEmail(email) {
 function emailReducer(state, action) {
     switch (action.type) {
         case 'USER_INPUT':
-            return {value: action.payload, isValid: isValidEmail(action.payload)};
+            return {
+                value: action.payload,
+                isValid: isValidEmail(action.payload),
+                touched: true
+            };
         case 'INPUT_BLUR':
-            return {value: state.value, isValid: isValidEmail(state.value)};
+            return {
+                value: state.value,
+                isValid: isValidEmail(state.value),
+                touched: true
+            };
         default:
-            return {value: '', isValid: false};
+            return {
+                value: '',
+                isValid: false,
+                touched: false
+            };
     }
 }
 
 function passwordReducer(state, action) {
     switch (action.type) {
         case 'USER_INPUT':
-            return {value: action.payload, isValid: action.payload.length > 6};
+            return {
+                value: action.payload,
+                isValid: action.payload.length > 6,
+                touched: true
+            };
         case 'INPUT_BLUR':
-            return {value: state.value, isValid: state.value.length > 6};
+            return {
+                value: state.value,
+                isValid: state.value.length > 6,
+                touched: true
+            };
         default:
-            return {value: '', isValid: false};
+            return {
+                value: '',
+                isValid: false,
+                touched: false
+            };
     }
 }
 
@@ -69,34 +94,24 @@ const Login = () => {
     return (
         <Card className={classes.login}>
             <form onSubmit={submitHandler}>
-                <div
-                    className={`${classes.control} ${
-                        emailState.isValid === false ? classes.invalid : ''
-                    }`}
-                >
-                    <label htmlFor='email'>E-Mail</label>
-                    <input
-                        type='email'
-                        id='email'
-                        value={emailState.value}
-                        onChange={emailChangeHandler}
-                        onBlur={emailBlurHandler}
-                    />
-                </div>
-                <div
-                    className={`${classes.control} ${
-                        passwordState.isValid === false ? classes.invalid : ''
-                    }`}
-                >
-                    <label htmlFor='password'>Password</label>
-                    <input
-                        type='password'
-                        id='password'
-                        value={passwordState.value}
-                        onChange={passwordChangeHandler}
-                        onBlur={passwordBlurHandler}
-                    />
-                </div>
+                <Input
+                    label='E-Mail'
+                    type='email'
+                    id='email'
+                    isValid={!emailState.touched || isValidEmail}
+                    value={emailState.value}
+                    onChange={emailChangeHandler}
+                    onBlur={emailBlurHandler}
+                />
+                <Input
+                    label='Password'
+                    type='password'
+                    id='password'
+                    isValid={!passwordState.touched || isValidPassword}
+                    value={passwordState.value}
+                    onChange={passwordChangeHandler}
+                    onBlur={passwordBlurHandler}
+                />
                 <div className={classes.actions}>
                     <Button type='submit'
                             className={classes.btn}

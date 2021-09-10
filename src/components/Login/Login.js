@@ -1,8 +1,9 @@
-import React, {useEffect, useReducer, useState} from 'react';
+import React, {useContext, useEffect, useReducer, useState} from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
+import AuthContext from '../../store/auth-context';
 
 function isValidEmail(email) {
     return /\S+@\S+\.\S+/.test(email);
@@ -30,7 +31,9 @@ function passwordReducer(state, action) {
     }
 }
 
-const Login = (props) => {
+const Login = () => {
+    const authContext = useContext(AuthContext);
+
     const [formIsValid, setFormIsValid] = useState(false);
     const [passwordState, dispatchPassword] = useReducer(passwordReducer, {value: '', isValid: null});
     const [emailState, dispatchEmail] = useReducer(emailReducer, {value: '', isValid: null});
@@ -40,7 +43,6 @@ const Login = (props) => {
 
     useEffect(() => {
         setFormIsValid(isValidEmail && isValidPassword);
-        console.log(isValidEmail && isValidPassword);
     }, [isValidEmail, isValidPassword]);
 
     const emailChangeHandler = (event) => {
@@ -61,7 +63,7 @@ const Login = (props) => {
 
     const submitHandler = (event) => {
         event.preventDefault();
-        props.onLogin(emailState.value, passwordState.value);
+        authContext.onLogin(emailState.value, passwordState.value);
     };
 
     return (
